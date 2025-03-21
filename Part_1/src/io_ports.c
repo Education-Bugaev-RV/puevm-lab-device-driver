@@ -1,11 +1,5 @@
-#include "../incl/address_map.h"
+#include "../incl/io_ports.h"
 
-void load_bufer_to_hex_display( int buffer );
-void clear_hex_display();
-void update_hex_display();
-
-void stio_led_r(uint32_t data);
-void stio_led_g(uint8_t data);
 
 		//  массив байтов, которые загрузятся по адресу 7-ых индикаторов при вызове функции update_hex_display()
 char	hex_segments[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
