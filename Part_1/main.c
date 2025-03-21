@@ -49,7 +49,7 @@ int main(void)
 
 uint8_t get_char_ps2(uint8_t* data) {
     volatile uint16_t *ps_2_base = (uint16_t *)PS_2_BASE ;
-    uint16_t data_reg = *ps_2_base; // Считываем данные из JTAG UART
+    uint16_t data_reg = *ps_2_base;
 
     if (data_reg & 0x8000) { // Проверяем флаг RVALID
         *data = data_reg & 0xff;
