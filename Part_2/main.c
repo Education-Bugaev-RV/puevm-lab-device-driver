@@ -24,8 +24,6 @@ int main(void)
 	// Если увидели в терминале эту строку значит функция main запустилась
 	printf("Hello World\n");
 	clear_hex_display();
-
-	volatile int * ps2_base_ptr = (int *) PUSHBUTTON_BASE;
 	
 	uint8_t packet_ps2[4] = {0,0,0,0}; // Массив для хранения полученных байтов от ps/2 порта  (размером 4 т.к можно будет потом преобразовать к слову uint32_t )
 	uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта

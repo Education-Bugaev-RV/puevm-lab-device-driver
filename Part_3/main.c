@@ -19,8 +19,6 @@ int main(void)
 	printf("Hello World\n");
 	clear_hex_display();
 	stio_led_g(0);
-
-	volatile int * ps2_base_ptr = (int *) PUSHBUTTON_BASE;
 	
 	uint8_t packet_ps2[4] = {0,0,0,0}; 	// Массив для хранения полученных байтов от ps/2 порта  (размером 4 т.к можно будет потом преобразовать к слову uint32_t )
 	uint8_t ps2_data = 0;  				// Переменная для считывания данных из ps/2 порта
@@ -88,58 +86,6 @@ int main(void)
 				printf("The 0xaa was got\n");
 				get_0xaa_form_mouse = true;
 			}
-		}
-	}
-	
-
-	while (1)
-	{
-		switch (mouse_state)
-		{
-		case START:{
-			count_bytes_from_ps2 = 0;
-			
-			if (ps2_mouse_init() == OK){
-				mouse_state = READY;
-			}
-
-			break;
-		}
-		case READY:{
-			if (get_char_ps2(&ps2_data) == OK){
-				packet_ps2[count_bytes_from_ps2] = ps2_data;
-				count_bytes_from_ps2++;
-				if (count_bytes_from_ps2 % 3 == 0){
-					load_bufer_to_hex_display( *((uint32_t*)packet_ps2));
-					count_bytes_from_ps2 = 0;
-				}
-
-				if (ps2_data == 0xaa)
-				{
-					printf("The 0xaa was got\n");
-					mouse_state = GET_AA;
-				}
-			}
-			break;
-		}	
-		case GET_AA:{
-			if (get_char_ps2(&ps2_data) == OK){
-				packet_ps2[count_bytes_from_ps2] = ps2_data;
-				count_bytes_from_ps2++;
-				if (count_bytes_from_ps2 % 3 == 0){
-					load_bufer_to_hex_display( *((uint32_t*)packet_ps2));
-					count_bytes_from_ps2 = 0;
-				}
-				mouse_state = (ps2_data == 0x00) ? START : READY;
-			}
-			break;
-		}	
-		
-		default:{
-			printf("Unknown state!\n");
-			mouse_state = START;
-			break;
-		}
 		}
 	}
 }
