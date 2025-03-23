@@ -73,40 +73,53 @@ uint8_t ps2_mouse_init(){
     return OK;
 }
 
-uint8_t ps2_mouse_init_driver(){
+uint8_t ps2_mouse_init_driver()
+{
+    // Выключаем прерывания от порта ps/2
+    volatile int *ps2_port_ptr = (int *)PS_2_BASE;
+    *(ps2_port_ptr + 1) = 0;
+
     uint8_t result = OK;
 
     // Совершаем 5 попыток инициализации подключенной мыши
     for (size_t i = 0; i < 5; i++)
     {
         result = ps2_mouse_init();
-        if (result == OK){
+        if (result == OK)
+        {
             break;
         }
         
         // задержка для ожидания подключения
-        for (size_t i = 0; i < 1000; i++); 
+        for (size_t i = 0; i < 1000; i++)
+            ;
     }
-    if (result != OK){
+    if (result != OK)
+    {
         return result;
     }
 
     // Разрешаем прерывания от порта ps/2
-    volatile int * ps2_port_ptr = (int *) PS_2_BASE;
-    *(ps2_port_ptr+1) = 1;
+    *(ps2_port_ptr + 1) = 1;
     
     return result;
 }
 
-uint8_t ps2_mouse_disable_driver(){
+uint8_t ps2_mouse_disable_driver()
+{
+
+    // Выключаем прерывания от порта ps/2
+    volatile int *ps2_port_ptr = (int *)PS_2_BASE;
+    *(ps2_port_ptr + 1) = 0;
     
-    uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта
+    uint8_t ps2_data = 0; // Переменная для считывания данных из ps/2 порта
 
     // отправляем команду запрета отправки пакетов сообщений
     put_char_ps2(0xf5);
     
     // Ожидаем байт ответа 
-    while (get_char_ps2(&ps2_data) != OK);
+    while (get_char_ps2(&ps2_data) != OK)
+        ;
     // Если не равен 0xfa прекращаем проверку
     if (ps2_data != 0xfa)
     {
@@ -116,9 +129,7 @@ uint8_t ps2_mouse_disable_driver(){
     // Сюда дошли только если получили подтверждение на команду запрета отправки сообщений
     printf("The messages of mouse is Disabled\n");
 
-     // Выключаем прерывания от порта ps/2
-     volatile int * ps2_port_ptr = (int *) PS_2_BASE;
-     *(ps2_port_ptr+1) = 0;
+    return OK;
 }
 
 uint8_t ps2_port_parse_mouse_package(struct change_mouse_t* package_change_mouse_ptr){
