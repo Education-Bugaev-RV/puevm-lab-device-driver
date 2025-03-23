@@ -14,6 +14,11 @@ struct change_mouse_t package_change_mouse ={
     .edge_capture = 0
 };
 
+uint16_t x_val_max = 0;
+uint16_t y_val_max = 0;
+
+void check_mouse_position();
+
 uint8_t get_char_ps2(uint8_t* data) {
     volatile uint16_t *ps_2_base = (uint16_t *)PS_2_BASE ;
     uint16_t data_reg = *ps_2_base; 
@@ -222,21 +227,47 @@ void ps2_port_isr(){
             global_change_mouse.y_val           += package_change_mouse.y_val       ;
             global_change_mouse.keys             = package_change_mouse.keys        ;
             global_change_mouse.edge_capture    |= package_change_mouse.edge_capture;
-        }
-        
-        
+
+            check_mouse_position();
+        }        
     }
 }
 
-void get_mouse_change(struct change_mouse_t* package_change_mouse_ptr){
+void check_mouse_position(){
+    if (global_change_mouse.x_val < 0)
+    {
+        global_change_mouse.x_val = 0;
+    }
+    else if (x_val_max != 0 && global_change_mouse.x_val > x_val_max)
+    {
+        global_change_mouse.x_val = x_val_max;
+    }
+    
+    if (global_change_mouse.y_val < 0)
+    {
+        global_change_mouse.y_val = 0;
+    }
+    else if (y_val_max != 0 && global_change_mouse.y_val > y_val_max){
+        global_change_mouse.y_val = y_val_max;
+    }
+    
+}
+
+void set_mouse_bounds(uint16_t x_max, uint16_t y_max){
+    x_val_max = x_max;
+    y_val_max = y_max;
+}
+
+void get_mouse_change(struct change_mouse_t *package_change_mouse_ptr)
+{
     package_change_mouse_ptr->x_val          = package_change_mouse.x_val;
     package_change_mouse_ptr->y_val          = package_change_mouse.y_val;
     package_change_mouse_ptr->keys           = package_change_mouse.keys;
     package_change_mouse_ptr->edge_capture   = package_change_mouse.edge_capture;
 }
 
-void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr){
-    
+void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr)
+{
     global_change_mouse_ptr->x_val          = global_change_mouse.x_val;
     global_change_mouse_ptr->y_val          = global_change_mouse.y_val;
     global_change_mouse_ptr->keys           = global_change_mouse.keys;

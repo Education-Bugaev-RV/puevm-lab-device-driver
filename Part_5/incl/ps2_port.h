@@ -42,6 +42,9 @@ uint8_t ps2_port_parse_mouse_package();
 // получите информацию о ПОСЛЕДНИХ изменениях положения и кнопок мыши
 void get_mouse_change(struct change_mouse_t* package_change_mouse_ptr);
 
+// получите информацию о ГЛОБАЛЬНОМ состоянии мыши
 void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr);
+
+void set_mouse_bounds(uint16_t x_max, uint16_t y_max);
 
 #endif

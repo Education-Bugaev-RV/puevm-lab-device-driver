@@ -25,6 +25,7 @@ int main(void)
 	while (ps2_mouse_init_driver() != OK);
 	printf("Driver was initialized\n");
 
+	set_mouse_bounds(319, 239);
 
 	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
 	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
