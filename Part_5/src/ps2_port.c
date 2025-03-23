@@ -81,6 +81,10 @@ uint8_t ps2_mouse_init(){
 }
 
 uint8_t ps2_mouse_init_driver(){
+    // Выключаем прерывания от порта ps/2
+    volatile int *ps2_port_ptr = (int *)PS_2_BASE;
+    *(ps2_port_ptr + 1) = 0;
+
     uint8_t result = OK;
 
     // Совершаем 5 попыток инициализации подключенной мыши
@@ -99,7 +103,6 @@ uint8_t ps2_mouse_init_driver(){
     }
 
     // Разрешаем прерывания от порта ps/2
-    volatile int * ps2_port_ptr = (int *) PS_2_BASE;
     *(ps2_port_ptr+1) = 1;
     
     return result;
@@ -107,6 +110,10 @@ uint8_t ps2_mouse_init_driver(){
 
 uint8_t ps2_mouse_disable_driver(){
     
+    // Выключаем прерывания от порта ps/2
+    volatile int * ps2_port_ptr = (int *) PS_2_BASE;
+    *(ps2_port_ptr+1) = 0;
+
     uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта
 
     // отправляем команду запрета отправки пакетов сообщений
@@ -123,9 +130,8 @@ uint8_t ps2_mouse_disable_driver(){
     // Сюда дошли только если получили подтверждение на команду запрета отправки сообщений
     printf("The messages of mouse is Disabled\n");
 
-     // Выключаем прерывания от порта ps/2
-     volatile int * ps2_port_ptr = (int *) PS_2_BASE;
-     *(ps2_port_ptr+1) = 0;
+
+    return OK;
 }
 
 uint8_t ps2_port_parse_mouse_package(struct change_mouse_t* package_change_mouse_ptr){
