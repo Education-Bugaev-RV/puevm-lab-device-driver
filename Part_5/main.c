@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "incl/address_map.h"
 #include "src/io_ports.c"
@@ -7,13 +8,11 @@
 
 #include "src/exceptions.c"
 
-
-enum{
-	START,	// Состояние при первом подключении миши (требуется перезагрузить и разрешить отправку пакетов)
-	READY,	// Рабочее состояние (Считываются байты и выводятся на hex-индикаторы)
-	GET_AA	// Обнаружен байт AA если следующий байт будет 00, то значит произошло переподключение мыши
-}mouse_state = START;
-
+enum
+{
+	MASSAGE_ENABLE,
+	MASSAGE_DISABLE
+} mouse_state = MASSAGE_ENABLE;
 
 int main(void)
 {
@@ -21,6 +20,7 @@ int main(void)
 	printf("Hello World\n");
 	clear_hex_display();
 	stio_led_g(0);
+	stio_led_r(0);
 
 	while (ps2_mouse_init_driver() != OK);
 	printf("Driver was initialized\n");
@@ -33,25 +33,48 @@ int main(void)
 	struct change_mouse_t global_change_mouse;
 
 	uint32_t hex_ind_value = 0;
+	uint32_t sw_io = 0;
 
 	while (1)
 	{
-		//get_mouse_change(&package_change_mouse);
-		//stio_led_g(package_change_mouse.keys);
-		//					
-		//hex_ind_value   = package_change_mouse.x_val;
-		//hex_ind_value <<= 16;
-		//hex_ind_value  |= (package_change_mouse.y_val & 0xffff);
-		//load_bufer_to_hex_display(hex_ind_value);
-							
-		get_mouse_state(&global_change_mouse);
-		stio_led_g(global_change_mouse.keys);
-		stio_led_r(global_change_mouse.edge_capture);
+		ldio_switch(&sw_io);
+
+		switch (sw_io)
+		{
+		case 0b0:
+			get_mouse_state(&global_change_mouse);
+			stio_led_g(global_change_mouse.keys);
+			stio_led_r(global_change_mouse.edge_capture);
+			
+			hex_ind_value   = global_change_mouse.x_val;
+			hex_ind_value <<= 16;
+			hex_ind_value  |= (global_change_mouse.y_val & 0xffff);
+			load_bufer_to_hex_display(hex_ind_value);
+			break;
+
+		case 0b1:
+			if (mouse_state == MASSAGE_DISABLE)
+			{
+				while (ps2_mouse_init_driver() != OK);
+				printf("Driver was initialized\n");
+				mouse_state = MASSAGE_ENABLE;
+			}
+			break;
 		
-		hex_ind_value   = global_change_mouse.x_val;
-		hex_ind_value <<= 16;
-		hex_ind_value  |= (global_change_mouse.y_val & 0xffff);
-		load_bufer_to_hex_display(hex_ind_value);
+		
+		case 0b10:
+			if (mouse_state == MASSAGE_ENABLE)
+			{
+				while (ps2_mouse_disable_driver() != OK);
+				printf("Driver was disabled\n");
+				mouse_state = MASSAGE_DISABLE;
+			}
+			break;
+			
+		default:
+			printf("Unknown State!!!\n");
+			break;
+		}
 	}
 }
 
