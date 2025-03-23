@@ -27,30 +27,20 @@ int main(void)
 
 
 	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
-	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
+	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процессору )
 
 	struct change_mouse_t package_change_mouse;
-	struct change_mouse_t global_change_mouse;
 
 	uint32_t hex_ind_value = 0;
 
 	while (1)
 	{
-		//get_mouse_change(&package_change_mouse);
-		//stio_led_g(package_change_mouse.keys);
-		//					
-		//hex_ind_value   = package_change_mouse.x_val;
-		//hex_ind_value <<= 16;
-		//hex_ind_value  |= (package_change_mouse.y_val & 0xffff);
-		//load_bufer_to_hex_display(hex_ind_value);
+		get_mouse_change(&package_change_mouse);
+		stio_led_g(package_change_mouse.keys);
 							
-		get_mouse_state(&global_change_mouse);
-		stio_led_g(global_change_mouse.keys);
-		stio_led_r(global_change_mouse.edge_capture);
-		
-		hex_ind_value   = global_change_mouse.x_val;
+		hex_ind_value   = package_change_mouse.x_val;
 		hex_ind_value <<= 16;
-		hex_ind_value  |= (global_change_mouse.y_val & 0xffff);
+		hex_ind_value  |= (package_change_mouse.y_val & 0xffff);
 		load_bufer_to_hex_display(hex_ind_value);
 	}
 }

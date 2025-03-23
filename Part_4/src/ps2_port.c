@@ -1,12 +1,5 @@
 #include "../incl/ps2_port.h"
 
-struct change_mouse_t global_change_mouse ={
-    .x_val = 0,
-    .y_val = 0,
-    .keys  = 0,
-    .edge_capture = 0
-};
-
 struct change_mouse_t package_change_mouse ={
     .x_val = 0,
     .y_val = 0,
@@ -208,16 +201,6 @@ void ps2_port_isr(){
             ps2_mouse_init();
             continue;
         }
-
-        if (return_code_of_parsing ==  OK_PACKAGE_COMPLETE)
-        {
-            // Обновляем структуру хранящую глобальное состояние мыши
-            global_change_mouse.x_val           += package_change_mouse.x_val       ;
-            global_change_mouse.y_val           += package_change_mouse.y_val       ;
-            global_change_mouse.keys             = package_change_mouse.keys        ;
-            global_change_mouse.edge_capture    |= package_change_mouse.edge_capture;
-        }
-        
         
     }
 }
@@ -227,12 +210,4 @@ void get_mouse_change(struct change_mouse_t* package_change_mouse_ptr){
     package_change_mouse_ptr->y_val          = package_change_mouse.y_val;
     package_change_mouse_ptr->keys           = package_change_mouse.keys;
     package_change_mouse_ptr->edge_capture   = package_change_mouse.edge_capture;
-}
-
-void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr){
-    
-    global_change_mouse_ptr->x_val          = global_change_mouse.x_val;
-    global_change_mouse_ptr->y_val          = global_change_mouse.y_val;
-    global_change_mouse_ptr->keys           = global_change_mouse.keys;
-    global_change_mouse_ptr->edge_capture   = global_change_mouse.edge_capture;
 }
