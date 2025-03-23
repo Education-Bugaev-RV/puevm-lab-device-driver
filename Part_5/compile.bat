@@ -7,7 +7,7 @@ SET LD=%QUARTUS_ROOTDIR%/../University_Program/Monitor_Program/build/nios_cpp_bu
 
 SET OUTPUT_FILE_NAME=main.elf
 SET JTAG_LIB=%QUARTUS_ROOTDIR%\..\University_Program\Monitor_Program\amp\lib\src\niosII_jtag_uart.c
-SET SRC_FILES=%CD%\main.c %JTAG_LIB%
+SET SRC_FILES=%CD%\main.c %CD%\asm\exeption_handler.s %JTAG_LIB%
 
 echo on
 
