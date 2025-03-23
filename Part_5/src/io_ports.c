@@ -67,7 +67,8 @@ void stio_led_g(uint8_t data){
 	 return;
 }
 
-void ldio_swith(uint32_t *data){
+void ldio_switch(uint32_t *data)
+{
 	volatile int * sw = (uint8_t *) SLIDER_SWITCH_BASE;
 	*data = *sw ;
 	 return;

@@ -14,6 +14,7 @@ void update_hex_display();
 
 void stio_led_r(uint32_t data);
 void stio_led_g(uint8_t data);
+void ldio_switch(uint32_t *data);
 
 //  массив байтов, которые загрузятся по адресу 7-ых индикаторов при вызове функции update_hex_display()
 extern char	hex_segments[8];
