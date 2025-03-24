@@ -25,9 +25,9 @@ int main(void)
 	printf("Hello World\n");
 	clear_hex_display();
 	
-	uint8_t packet_ps2[4] = {0,0,0,0}; // Массив для хранения полученных байтов от ps/2 порта  (размером 4 т.к можно будет потом преобразовать к слову uint32_t )
-	uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта
-	int count_bytes_from_ps2 = 0;
+	uint8_t packet_ps2[4] = {0,0,0,0}; 	// Массив для хранения полученных байтов от ps/2 порта  (размером 4 т.к можно будет потом преобразовать к слову uint32_t )
+	uint8_t ps2_data = 0;  				// Переменная для считывания данных из ps/2 порта
+	int count_bytes_from_ps2 = 0;		// Счетчик считанных байтов
 
 	while (1)
 	{
@@ -36,79 +36,73 @@ int main(void)
 		case START:{
 			count_bytes_from_ps2 = 0;
 			
-			clear_ps2(); 				// отчистка чтобы предыдущие данные не повлияли на интерпретацию ответа на следующую команду
-			put_char_ps2(0xff);
+			// Чистим буфер от предыдущих данных
+				
+			// Отправляем команду сброса
+
 
 			// Ожидаем первый байт ответа 
-			while (get_char_ps2(&ps2_data) != OK);
+
 			// Если не равен 0xfa прекращаем проверку
-			if (ps2_data != 0xfa)
-			{
-				break;
-			}
+
 			
 			// Ожидаем второй байт ответа 
-			while (get_char_ps2(&ps2_data) != OK);
-			// Если не равен 0xaa прекращаем проверку
-			if (ps2_data != 0xaa)
-			{
-				break;
-			}
-			
-			// Когда я тестировал третьего байта не было
 
-			//// Ожидаем третий байт ответа 
-			//while (get_char_ps2(&ps2_data) != OK);
-			//// Если не равен 0xaa прекращаем проверку
-			//if (ps2_data != 0x00)
-			//{
-			//	printf("3: 0x%02x\n",ps2_data);
-			//	break;
-			//}
+			// Если не равен 0xaa прекращаем проверку
+			
+
 
 			// Сюда дошли только если получили корректный ответ на сброс
-			printf("Mouse has been reseting\n");
+			printf("Mouse has been reseting\n"); // Отладочное сообщение
+			
+			// Разрешаем отправку пакетов от мыши
 			put_char_ps2(0xf4);
 
 			// Ожидаем байт ответа 
-			while (get_char_ps2(&ps2_data) != OK);
+
 			// Если не равен 0xfa прекращаем проверку
-			if (ps2_data != 0xfa)
-			{
-				break;
-			}
+
 
 			// Сюда дошли только если получили корректный ответ на сброс и успешно разрешили отправку сообщений от мыши
-			printf("The messages of mouse is Enabled\n");
-			mouse_state = READY;
+			printf("The messages of mouse is Enabled\n"); // Отладочное сообщение
+			
+			// Меняем состояние на соответствующее
+
 			break;
 		}
 		case READY:{
+			
+			// Условие проверяющее валидность данных
 			if (get_char_ps2(&ps2_data) == OK){
-				packet_ps2[count_bytes_from_ps2] = ps2_data;
-				count_bytes_from_ps2++;
+				packet_ps2[count_bytes_from_ps2] = ps2_data;	// Сохраняем полученный байт в массив
+				count_bytes_from_ps2++; 					    // Увеличиваем счетчик считанных байтов
+				
+				// Если получили 3 байта, то выводим их на экран
 				if (count_bytes_from_ps2 % 3 == 0){
 					load_bufer_to_hex_display( *((uint32_t*)packet_ps2));
 					count_bytes_from_ps2 = 0;
 				}
 
-				if (ps2_data == 0xaa)
-				{
-					printf("The 0xaa was got\n");
-					mouse_state = GET_AA;
-				}
+				// Проверка на переподключение мыши (первый байт последовательности 0xaa00)
+
+				// Меняем состояние на соответствующее
 			}
 			break;
 		}	
 		case GET_AA:{
+			// Условие проверяющее валидность данных
 			if (get_char_ps2(&ps2_data) == OK){
-				packet_ps2[count_bytes_from_ps2] = ps2_data;
-				count_bytes_from_ps2++;
+				packet_ps2[count_bytes_from_ps2] = ps2_data; // Сохраняем полученный байт в массив
+				count_bytes_from_ps2++;						 // Увеличиваем счетчик считанных байтов
+
+				// Если получили 3 байта, то выводим их на экран
 				if (count_bytes_from_ps2 % 3 == 0){
 					load_bufer_to_hex_display( *((uint32_t*)packet_ps2));
 					count_bytes_from_ps2 = 0;
 				}
-				mouse_state = (ps2_data == 0x00) ? START : READY;
+
+				// Меняем состояние на соответствующее
+				
 			}
 			break;
 		}	
