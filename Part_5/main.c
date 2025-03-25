@@ -28,48 +28,41 @@ int main(void)
 	set_mouse_bounds(319, 239);
 
 	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
-	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
+	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процессору )
 
 	struct change_mouse_t package_change_mouse;
 	struct change_mouse_t global_change_mouse;
 
-	uint32_t hex_ind_value = 0;
-	uint32_t sw_io = 0;
+	uint32_t hex_ind_value = 0;			// Переменная для хранения значения для вывода на индикаторы
+	uint32_t sw_io = 0;					// Переменная для получения состояния переключателей
 
 	while (1)
 	{
+		// Получаем состояние переключателей
 		ldio_switch(&sw_io);
 
+		
 		switch (sw_io)
 		{
+		// Основное состояние программы (получение данных и отображение перемещения мыши)
 		case 0b0:
+			// Вызов функции для получения глобального перемещения мыши
 			get_mouse_state(&global_change_mouse);
-			stio_led_g(global_change_mouse.keys);
-			stio_led_r(global_change_mouse.edge_capture);
+			stio_led_g(global_change_mouse.keys);  			// Отображение состояния кнопок мыши
+			stio_led_r(global_change_mouse.edge_capture);	// Отображение захваченное состояния кнопок мыши
 			
 			hex_ind_value   = global_change_mouse.x_val;
 			hex_ind_value <<= 16;
 			hex_ind_value  |= (global_change_mouse.y_val & 0xffff);
 			load_bufer_to_hex_display(hex_ind_value);
 			break;
-
+		// TODO: Состояние включения драйвера
 		case 0b1:
-			if (mouse_state == MASSAGE_DISABLE)
-			{
-				while (ps2_mouse_init_driver() != OK);
-				printf("Driver was initialized\n");
-				mouse_state = MASSAGE_ENABLE;
-			}
+			
 			break;
-		
-		
+		// TODO: Состояние выключения драйвера
 		case 0b10:
-			if (mouse_state == MASSAGE_ENABLE)
-			{
-				while (ps2_mouse_disable_driver() != OK);
-				printf("Driver was disabled\n");
-				mouse_state = MASSAGE_DISABLE;
-			}
+			
 			break;
 			
 		default:

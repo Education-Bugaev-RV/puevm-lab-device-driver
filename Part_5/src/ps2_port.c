@@ -220,44 +220,22 @@ void ps2_port_isr(){
             continue;
         }
 
-        if (return_code_of_parsing ==  OK_PACKAGE_COMPLETE)
-        {
-            // Обновляем структуру хранящую глобальное состояние мыши
-            global_change_mouse.x_val           += package_change_mouse.x_val       ;
-            global_change_mouse.y_val           += package_change_mouse.y_val       ;
-            global_change_mouse.keys             = package_change_mouse.keys        ;
-            global_change_mouse.edge_capture    |= package_change_mouse.edge_capture;
-
-            check_mouse_position();
-        }        
+        // TODO: Обновляем структуру хранящую глобальное состояние мыши если пакет был полностью прочитан
+        // TODO: выполнить коррекцию координат мыши в соответствии с заданными границами     
     }
 }
 
+// TODO: Функция для коррекции координат мыши в соответствии с заданными границами
 void check_mouse_position(){
-    if (global_change_mouse.x_val < 0)
-    {
-        global_change_mouse.x_val = 0;
-    }
-    else if (x_val_max != 0 && global_change_mouse.x_val > x_val_max)
-    {
-        global_change_mouse.x_val = x_val_max;
-    }
-    
-    if (global_change_mouse.y_val < 0)
-    {
-        global_change_mouse.y_val = 0;
-    }
-    else if (y_val_max != 0 && global_change_mouse.y_val > y_val_max){
-        global_change_mouse.y_val = y_val_max;
-    }
-    
+    printf("check_mouse_position() is not implemented\n");
 }
 
+// TODO: Функция для установки границ координат мыши
 void set_mouse_bounds(uint16_t x_max, uint16_t y_max){
-    x_val_max = x_max;
-    y_val_max = y_max;
+    printf("set_mouse_bounds() is not implemented\n");
 }
 
+// получение информации о ПОСЛЕДНИХ изменениях положения и кнопок мыши
 void get_mouse_change(struct change_mouse_t *package_change_mouse_ptr)
 {
     package_change_mouse_ptr->x_val          = package_change_mouse.x_val;
@@ -266,6 +244,7 @@ void get_mouse_change(struct change_mouse_t *package_change_mouse_ptr)
     package_change_mouse_ptr->edge_capture   = package_change_mouse.edge_capture;
 }
 
+// получение информации о ГЛОБАЛЬНОМ состоянии мыши
 void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr)
 {
     global_change_mouse_ptr->x_val          = global_change_mouse.x_val;
