@@ -34,6 +34,7 @@ void clear_ps2() {
     }   
 }
 
+// Функция инициализации компьютерной мыши ps/2 порта из части 3
 uint8_t ps2_mouse_init(){
     uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта
     
@@ -73,34 +74,31 @@ uint8_t ps2_mouse_init(){
     return OK;
 }
 
+// Инициализация драйвера мыши
 uint8_t ps2_mouse_init_driver()
 {
     // Выключаем прерывания от порта ps/2
     volatile int *ps2_port_ptr = (int *)PS_2_BASE;
-    *(ps2_port_ptr + 1) = 0;
+    // TODO: сбрасываем бит разрешения прерываний
 
-    uint8_t result = OK;
+    uint8_t result = OK; // Переменная для хранения результата инициализации
 
     // Совершаем 5 попыток инициализации подключенной мыши
     for (size_t i = 0; i < 5; i++)
     {
-        result = ps2_mouse_init();
-        if (result == OK)
-        {
-            break;
-        }
+        
+        // TODO: инициализируем компьютерную мышь функцией из части 3 и проверяем результат       
 
         // задержка для ожидания подключения
-        for (size_t i = 0; i < 1000; i++)
-            ;
+        for (size_t i = 0; i < 1000; i++);
+
     }
     if (result != OK)
     {
         return result;
     }
 
-    // Разрешаем прерывания от порта ps/2
-    *(ps2_port_ptr + 1) = 1;
+    // TODO: устанавливаем бит разрешения прерываний
 
     return result;
 }
@@ -108,37 +106,31 @@ uint8_t ps2_mouse_init_driver()
 uint8_t ps2_mouse_disable_driver()
 {
 
-    // Выключаем прерывания от порта ps/2
-    volatile int *ps2_port_ptr = (int *)PS_2_BASE;
-    *(ps2_port_ptr + 1) = 0;
+    // TODO: Выключаем прерывания от порта ps/2
 
     uint8_t ps2_data = 0; // Переменная для считывания данных из ps/2 порта
 
-    // отправляем команду запрета отправки пакетов сообщений
-    put_char_ps2(0xf5);
+    // TODO: отправляем команду запрета отправки пакетов сообщений
 
-    // Ожидаем байт ответа
-    while (get_char_ps2(&ps2_data) != OK)
-        ;
-    // Если не равен 0xfa прекращаем проверку
-    if (ps2_data != 0xfa)
-    {
-        return ERR;
-    }
+    // TODO: Ожидаем байт ответа
+
+    // TODO: Если не равен 0xfa прекращаем проверку с возвращением ошибки
+
 
     // Сюда дошли только если получили подтверждение на команду запрета отправки сообщений
-    printf("The messages of mouse is Disabled\n");
+    printf("The messages of mouse is Disabled\n"); // Отладочное сообщение
 
     return OK;
 }
 
+// Функция обработки пакета от мыши (из части 3)
 uint8_t ps2_port_parse_mouse_package(struct change_mouse_t* package_change_mouse_ptr){
-    static int		count_bytes_from_ps2    = 0;
-	static bool	    get_0xaa_form_mouse     = false;
+    static int		count_bytes_from_ps2    = 0;        // Счетчик принятых байтов от мыши
+	static bool	    get_0xaa_form_mouse     = false;    // Флаг для определения переподключения мыши
     static uint8_t  packet_ps2[3]           = {0,0,0}; 	// Массив для хранения полученных байтов от ps/2 порта
     
-    uint8_t ps2_data = 0;  // Переменная для считывания данных из ps/2 порта
-    uint8_t code_return = OK;
+    uint8_t ps2_data = 0;       // Переменная для считывания данных из ps/2 порта
+    uint8_t code_return = OK;   // Переменная для хранения кода возврата
 
     if (get_char_ps2(&ps2_data) == OK){
             
@@ -198,24 +190,24 @@ uint8_t ps2_port_parse_mouse_package(struct change_mouse_t* package_change_mouse
     return code_return;
 }
 
+// Функция обработки прерываний от ps/2 порта
 void ps2_port_isr(){
     volatile int * ps2_port_ptr = (int *) PS_2_BASE;
-    volatile uint8_t * IE = ((uint8_t*)ps2_port_ptr) + 5;
-    uint8_t return_code_of_parsing;
+    
+    // TODO: Нужно получить указатель на бит указывающий на возникновение прерывания (RI - 8й в PS2_Control)
+    
+    uint8_t return_code_of_parsing; // Переменная для хранения кода возврата функции обработки пакета
 
-    while ((*IE) & 1 == 1){
-        // Обновляем структуру хранящую состояния мыши в пределах пакета
-        return_code_of_parsing = ps2_port_parse_mouse_package(&package_change_mouse);
+    while (/* Выполняем обработку пакетов пока  RI не сбросится*/){
         
-        if (return_code_of_parsing == RECONNECT_DETECTING)
-        {
-            ps2_mouse_init();
-            continue;
-        }
+        // TODO: Обрабатываем данные из порта, формируем пакеты и получаем код возврата
+        
+        // TODO: если получили код о том что мышь переподключилась, то инициализируем ее
         
     }
 }
 
+// получение информации о ПОСЛЕДНИХ изменениях положения и кнопок мыши
 void get_mouse_change(struct change_mouse_t* package_change_mouse_ptr){
     package_change_mouse_ptr->x_val          = package_change_mouse.x_val;
     package_change_mouse_ptr->y_val          = package_change_mouse.y_val;

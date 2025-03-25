@@ -15,16 +15,16 @@ int main(void)
 	clear_hex_display();
 	stio_led_g(0);
 
+	// ps2_mouse_init_driver нужно доделать
 	while (ps2_mouse_init_driver() != OK);
-	printf("Driver was initialized\n");
+	printf("Driver was initialized\n");		// Отладочное сообщение
 
 
-	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
+	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний)	
 	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процессору )
 
-	struct change_mouse_t package_change_mouse;
-
-	uint32_t hex_ind_value = 0;
+	struct change_mouse_t package_change_mouse; // Структура для хранения информации о последних изменениях положения и кнопок мыши
+	uint32_t hex_ind_value = 0;					// Переменная для хранения значения для вывода на индикаторы
 
 	while (1)
 	{
