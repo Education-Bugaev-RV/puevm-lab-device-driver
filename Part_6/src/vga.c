@@ -18,7 +18,6 @@ void draw_rectangle(int x_start, int y_start, int width, int height, short int c
         for (int x = x_start; x < x_start + width; ++x)
         {
             WRITE_VGA_BUFFER(x, y, color, ptr);
-            //ptr[(y << 9) + x] = color;
         }
     }
 }

@@ -292,21 +292,16 @@ static void draw_mouse(int16_t x, int16_t y)
         for (int col = 0; col < MOUSE_WIDTH; col++)
         {
             mouse_buffer[row][col] = READ_VGA_BUFFER(x + col, y + row, FRONT_FRAME); // read_pixel(x + col, y + row);
-        }
-    }
 
-    // Рисуем указатель мыши
-    for (int row = 0; row < MOUSE_HEIGHT; row++)
-    {
-        for (int col = 0; col < MOUSE_WIDTH; col++)
-        {
-            int8_t val = mouse_shape[row][col];
             
+            // Рисуем указатель мыши
+
+            int8_t val = mouse_shape[row][col];
+
             if (val == -1)
                 continue;
 
             uint16_t color = (val == 0) ? 0x0000 : 0xFFFF;
-            //draw_pixel(x + col, y + row, color);
             WRITE_VGA_BUFFER(x + col, y + row, color, FRONT_FRAME);
         }
     }
@@ -322,10 +317,8 @@ static void erase_mouse()
     {
         for (int col = 0; col < MOUSE_WIDTH; col++)
         {
-            //draw_pixel(global_change_mouse.x_val + col, global_change_mouse.y_val + row, mouse_buffer[row][col]);
             WRITE_VGA_BUFFER(global_change_mouse.x_val + col, global_change_mouse.y_val + row, mouse_buffer[row][col], FRONT_FRAME);
         }
     }
-
     mouse_visible = false;
 }
