@@ -51,6 +51,9 @@ static uint16_t mouse_buffer[MOUSE_HEIGHT][MOUSE_WIDTH];
 static void draw_mouse();
 static void erase_mouse();
 
+extern bool invert_mouse_x;
+extern bool invert_mouse_y;
+
 uint8_t get_char_ps2(uint8_t* data);
 void put_char_ps2(uint8_t data);
 void clear_ps2();

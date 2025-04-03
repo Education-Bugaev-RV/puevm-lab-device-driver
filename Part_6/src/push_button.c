@@ -37,11 +37,15 @@ void pushbutton_isr(void)
 		// Обработка KEY2
 		sw_io &= 0x1;
 		ps2_mouse_set_visible((bool)sw_io);
+		printf("Mouse is %s\n", (bool)sw_io ? "visible" : "invisible");
 	}
 	if (press & 0x8)
 	{
 		// Обработка KEY3
-		printf("KEY3\n");
+		sw_io &= 0x3;
+		invert_mouse_y = (bool)(sw_io & 0x1);
+		invert_mouse_x = (bool)((sw_io >> 1) & 0x1);
+		printf("Invert mouse x: %s, y: %s\n", invert_mouse_x ? "true" : "false", invert_mouse_y ? "true" : "false");
 	}
 	return;
 }

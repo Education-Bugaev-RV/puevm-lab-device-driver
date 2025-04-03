@@ -16,7 +16,9 @@ uint16_t x_val_max = 0;
 uint16_t y_val_max = 0;
 
 static bool mouse_visible = true;
-;
+
+bool invert_mouse_x = false;
+bool invert_mouse_y = true;
 
 void check_mouse_position();
 
@@ -110,8 +112,6 @@ uint8_t ps2_mouse_init_driver()
     volatile int *ps2_port_ptr = (int *)PS_2_BASE;
     *(ps2_port_ptr + 1) = 0;
 
-    erase_mouse(); // очищаем экран от указателя мыши
-
     uint8_t result = OK;
 
     // Совершаем 5 попыток инициализации подключенной мыши
@@ -146,6 +146,8 @@ uint8_t ps2_mouse_disable_driver()
     // Выключаем прерывания от порта ps/2
     volatile int *ps2_port_ptr = (int *)PS_2_BASE;
     *(ps2_port_ptr + 1) = 0;
+
+    erase_mouse(); // Удаляем указатель мыши с экрана
 
     uint8_t ps2_data = 0; // Переменная для считывания данных из ps/2 порта
 
@@ -211,11 +213,21 @@ uint8_t ps2_port_parse_mouse_package(struct change_mouse_t *package_change_mouse
             package_x_val = packet_ps2[1];
             // преобразуем модуль перемещения с учетом знака направления
             package_x_val -= (packet_ps2[0] & 0x10) << 0x4;
+            
+            if (invert_mouse_x)
+            {
+                package_x_val = -package_x_val;
+            }
 
             // считываем третий байт пакета (как модуль перемещения по оси Y)
             package_y_val = packet_ps2[2];
             // преобразуем модуль перемещения с учетом знака направления
             package_y_val -= (packet_ps2[0] & 0x20) << 0x3;
+
+            if (invert_mouse_y)
+            {
+                package_y_val = -package_y_val;
+            }
 
             package_change_mouse_ptr->x_val = package_x_val;
             package_change_mouse_ptr->y_val = package_y_val;
