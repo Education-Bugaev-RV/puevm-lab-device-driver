@@ -46,7 +46,7 @@ static const int8_t mouse_shape[16][8] = {
 };
 
 static uint16_t mouse_buffer[MOUSE_HEIGHT][MOUSE_WIDTH];
-static bool mouse_visible = false;
+
 
 static void draw_mouse();
 static void erase_mouse();
@@ -66,6 +66,9 @@ void ps2_port_isr();
 
 // функция обработки полученных данных в пакет
 uint8_t ps2_port_parse_mouse_package();
+
+// установить видимость курсора мышь
+void ps2_mouse_set_visible(bool mouse_visible);
 
 // получите информацию о ПОСЛЕДНИХ изменениях положения и кнопок мыши
 void get_mouse_change(struct change_mouse_t* package_change_mouse_ptr);

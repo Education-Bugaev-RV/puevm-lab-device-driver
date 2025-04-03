@@ -15,6 +15,9 @@ struct change_mouse_t package_change_mouse = {
 uint16_t x_val_max = 0;
 uint16_t y_val_max = 0;
 
+static bool mouse_visible = true;
+;
+
 void check_mouse_position();
 
 uint8_t get_char_ps2(uint8_t *data)
