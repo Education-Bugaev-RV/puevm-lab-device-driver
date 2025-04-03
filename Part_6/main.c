@@ -54,36 +54,36 @@ int main(void)
 			get_mouse_state(&global_change_mouse);
 			stio_led_g(global_change_mouse.keys);
 			stio_led_r(global_change_mouse.edge_capture);
-			
-			hex_ind_value   = global_change_mouse.x_val;
+
+			hex_ind_value = global_change_mouse.x_val;
 			hex_ind_value <<= 16;
-			hex_ind_value  |= (global_change_mouse.y_val & 0xffff);
+			hex_ind_value |= (global_change_mouse.y_val & 0xffff);
 			load_bufer_to_hex_display(hex_ind_value);
 			break;
 
 		case 1:
 			if (mouse_state == MASSAGE_DISABLE)
 			{
-				while (ps2_mouse_init_driver() != OK);
+				while (ps2_mouse_init_driver() != OK)
+					;
 				printf("Driver was initialized\n");
 				mouse_state = MASSAGE_ENABLE;
 			}
 			break;
-		
-		
+
 		case 2:
 			if (mouse_state == MASSAGE_ENABLE)
 			{
-				while (ps2_mouse_disable_driver() != OK);
+				while (ps2_mouse_disable_driver() != OK)
+					;
 				printf("Driver was disabled\n");
 				mouse_state = MASSAGE_DISABLE;
 			}
 			break;
-			
+
 		default:
 			printf("Unknown State!!!\n");
 			break;
 		}
 	}
 }
-
