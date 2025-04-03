@@ -54,6 +54,10 @@ void clear_ps2()
 
 void ps2_mouse_set_visible(bool visible)
 {
+    if (visible != mouse_visible)
+    {
+        visible ? draw_mouse() : erase_mouse();
+    }
     mouse_visible = visible;
 }
 
@@ -106,6 +110,8 @@ uint8_t ps2_mouse_init_driver()
     volatile int *ps2_port_ptr = (int *)PS_2_BASE;
     *(ps2_port_ptr + 1) = 0;
 
+    erase_mouse(); // очищаем экран от указателя мыши
+
     uint8_t result = OK;
 
     // Совершаем 5 попыток инициализации подключенной мыши
@@ -137,7 +143,6 @@ uint8_t ps2_mouse_init_driver()
 
 uint8_t ps2_mouse_disable_driver()
 {
-
     // Выключаем прерывания от порта ps/2
     volatile int *ps2_port_ptr = (int *)PS_2_BASE;
     *(ps2_port_ptr + 1) = 0;
