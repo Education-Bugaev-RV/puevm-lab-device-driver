@@ -317,7 +317,11 @@ static void erase_mouse()
     {
         for (int col = 0; col < MOUSE_WIDTH; col++)
         {
-            WRITE_VGA_BUFFER(global_change_mouse.x_val + col, global_change_mouse.y_val + row, mouse_buffer[row][col], FRONT_FRAME);
+            WRITE_VGA_BUFFER(
+                global_change_mouse.x_val + col, 
+                global_change_mouse.y_val + row, 
+                mouse_buffer[row][col], FRONT_FRAME
+            );
         }
     }
     mouse_visible = false;
