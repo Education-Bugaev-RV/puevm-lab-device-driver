@@ -107,6 +107,9 @@ uint8_t ps2_mouse_init_driver(){
         return result;
     }
 
+    // Рисуем указатель мыши в начальной позиции
+    draw_mouse();
+
     // Разрешаем прерывания от порта ps/2
     *(ps2_port_ptr+1) = 1;
     

@@ -24,19 +24,19 @@ int main(void)
 	stio_led_g(0);
 	stio_led_r(0);
 
-	// Устанавливаем маску кнопок от которых будут обрабатываться прерывания	
-	volatile int * pushbutton_ptr = (int *) PUSHBUTTON_BASE;
-	*(pushbutton_ptr + 2) = 0b1110; 	
+	draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xA, FRONT_FRAME);
 
-	while (ps2_mouse_init_driver() != OK);
+	while (ps2_mouse_init_driver() != OK)
+		;
 	printf("Driver was initialized\n");
-
 	set_mouse_bounds(319, 239);
 
-	NIOS2_WRITE_IENABLE(IRQ_PS_2 | IRQ_PUSH_BUTTON); // Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )
-	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
+	// Устанавливаем маску кнопок от которых будут обрабатываться прерывания
+	volatile int *pushbutton_ptr = (int *)PUSHBUTTON_BASE;
+	*(pushbutton_ptr + 2) = 0b1110;
 
-	draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xA, FRONT_FRAME);
+	NIOS2_WRITE_IENABLE(IRQ_PS_2 | IRQ_PUSH_BUTTON); // Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )
+	NIOS2_WRITE_STATUS(1);							 // Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
 
 	struct change_mouse_t package_change_mouse;
 	struct change_mouse_t global_change_mouse;
