@@ -5,6 +5,7 @@
 #include "incl/address_map.h"
 #include "src/io_ports.c"
 #include "src/ps2_port.c"
+#include "src/push_button.c"
 
 #include "src/exceptions.c"
 #include "src/vga.c"
@@ -23,12 +24,16 @@ int main(void)
 	stio_led_g(0);
 	stio_led_r(0);
 
+	// Устанавливаем маску кнопок от которых будут обрабатываться прерывания	
+	volatile int * pushbutton_ptr = (int *) PUSHBUTTON_BASE;
+	*(pushbutton_ptr + 2) = 0b1110; 	
+
 	while (ps2_mouse_init_driver() != OK);
 	printf("Driver was initialized\n");
 
 	set_mouse_bounds(319, 239);
 
-	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
+	NIOS2_WRITE_IENABLE(IRQ_PS_2 | IRQ_PUSH_BUTTON); // Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )
 	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
 
 	draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0xA, FRONT_FRAME);
@@ -45,7 +50,7 @@ int main(void)
 
 		switch (sw_io)
 		{
-		case 0b0:
+		case 0:
 			get_mouse_state(&global_change_mouse);
 			stio_led_g(global_change_mouse.keys);
 			stio_led_r(global_change_mouse.edge_capture);
@@ -56,7 +61,7 @@ int main(void)
 			load_bufer_to_hex_display(hex_ind_value);
 			break;
 
-		case 0b1:
+		case 1:
 			if (mouse_state == MASSAGE_DISABLE)
 			{
 				while (ps2_mouse_init_driver() != OK);
@@ -66,7 +71,7 @@ int main(void)
 			break;
 		
 		
-		case 0b10:
+		case 2:
 			if (mouse_state == MASSAGE_ENABLE)
 			{
 				while (ps2_mouse_disable_driver() != OK);
