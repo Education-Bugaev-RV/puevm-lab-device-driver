@@ -10,12 +10,6 @@
 #include "src/exceptions.c"
 #include "src/vga.c"
 
-enum
-{
-	MASSAGE_ENABLE,
-	MASSAGE_DISABLE
-} mouse_state = MASSAGE_ENABLE;
-
 int main(void)
 {
 	// Если увидели в терминале эту строку значит функция main запустилась
@@ -38,52 +32,19 @@ int main(void)
 	NIOS2_WRITE_IENABLE(IRQ_PS_2 | IRQ_PUSH_BUTTON); // Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )
 	NIOS2_WRITE_STATUS(1);							 // Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
 
-	struct change_mouse_t package_change_mouse;
 	struct change_mouse_t global_change_mouse;
 
 	uint32_t hex_ind_value = 0;
-	uint32_t sw_io = 0;
 
 	while (1)
 	{
-		ldio_switch(&sw_io);
+		get_mouse_state(&global_change_mouse);
+		stio_led_g(global_change_mouse.keys);
+		stio_led_r(global_change_mouse.edge_capture);
 
-		switch (sw_io)
-		{
-		case 0:
-			get_mouse_state(&global_change_mouse);
-			stio_led_g(global_change_mouse.keys);
-			stio_led_r(global_change_mouse.edge_capture);
-
-			hex_ind_value = global_change_mouse.x_val;
-			hex_ind_value <<= 16;
-			hex_ind_value |= (global_change_mouse.y_val & 0xffff);
-			load_bufer_to_hex_display(hex_ind_value);
-			break;
-
-		case 1:
-			if (mouse_state == MASSAGE_DISABLE)
-			{
-				while (ps2_mouse_init_driver() != OK)
-					;
-				printf("Driver was initialized\n");
-				mouse_state = MASSAGE_ENABLE;
-			}
-			break;
-
-		case 2:
-			if (mouse_state == MASSAGE_ENABLE)
-			{
-				while (ps2_mouse_disable_driver() != OK)
-					;
-				printf("Driver was disabled\n");
-				mouse_state = MASSAGE_DISABLE;
-			}
-			break;
-
-		default:
-			printf("Unknown State!!!\n");
-			break;
-		}
+		hex_ind_value = global_change_mouse.x_val;
+		hex_ind_value <<= 16;
+		hex_ind_value |= (global_change_mouse.y_val & 0xffff);
+		load_bufer_to_hex_display(hex_ind_value);
 	}
 }
