@@ -283,13 +283,11 @@ void get_mouse_state(struct change_mouse_t* global_change_mouse_ptr)
     global_change_mouse_ptr->edge_capture   = global_change_mouse.edge_capture;
 }
 
-static void draw_mouse(int16_t x, int16_t y)
+static void draw_mouse()
 {
-    global_change_mouse.x_val = x;
-    global_change_mouse.y_val = y;
-    mouse_visible = true;
+    int16_t x = global_change_mouse.x_val;
+    int16_t y = global_change_mouse.y_val;
 
-    // Сохраняем текущее изображение под мышью
     for (int row = 0; row < MOUSE_HEIGHT; row++)
     {
         for (int col = 0; col < MOUSE_WIDTH; col++)

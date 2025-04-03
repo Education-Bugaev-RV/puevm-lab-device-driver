@@ -48,7 +48,7 @@ static const int8_t mouse_shape[16][8] = {
 static uint16_t mouse_buffer[MOUSE_HEIGHT][MOUSE_WIDTH];
 static bool mouse_visible = false;
 
-static void draw_mouse(int16_t x, int16_t y);
+static void draw_mouse();
 static void erase_mouse();
 
 uint8_t get_char_ps2(uint8_t* data);
