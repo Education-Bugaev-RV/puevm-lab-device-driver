@@ -26,26 +26,8 @@ typedef struct change_mouse_t
     uint8_t     edge_capture;
 };
 
-static const int8_t mouse_shape[16][8] = {
-    {    0, -1, -1, -1, -1, -1, -1, -1  },
-    {    0,  0, -1, -1, -1, -1, -1, -1  },
-    {    0,  1,  0, -1, -1, -1, -1, -1  },
-    {    0,  1,  1,  0, -1, -1, -1, -1  },
-    {    0,  1,  1,  1,  0, -1, -1, -1  },
-    {    0,  1,  1,  1,  1,  0, -1, -1  },
-    {    0,  1,  1,  1,  1,  1,  0, -1  },
-    {    0,  1,  1,  1,  1,  0,  0,  0  },
-    {    0,  1,  1,  1,  0, -1, -1, -1  },
-    {    0,  0,  0,  1,  0, -1, -1, -1  },
-    {    0, -1,  0,  1,  0, -1, -1, -1  },
-    {   -1, -1, -1,  0,  1,  0, -1, -1  },
-    {   -1, -1, -1,  0,  1,  0, -1, -1  },
-    {   -1, -1, -1, -1,  0,  1,  0, -1  },
-    {   -1, -1, -1, -1,  0,  1,  0, -1  },
-    {   -1, -1, -1, -1, -1,  0, -1, -1  }
-};
-
-static uint16_t mouse_buffer[MOUSE_HEIGHT][MOUSE_WIDTH];
+extern const    int8_t      mouse_shape[MOUSE_HEIGHT][MOUSE_WIDTH];
+extern          uint16_t    mouse_buffer[MOUSE_HEIGHT][MOUSE_WIDTH];
 
 
 static void draw_mouse();
