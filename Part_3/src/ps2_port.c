@@ -49,6 +49,14 @@ uint8_t ps2_mouse_init(){
     {
         return ERR;
     }
+    
+    // Ожидаем третий байт ответа 
+    while (get_char_ps2(&ps2_data) != OK);
+    // Если не равен 0xaa прекращаем проверку
+    if (ps2_data != 0x00)
+    {
+        return ERR;
+    }
 
     // Сюда дошли только если получили корректный ответ на сброс
     printf("Mouse has been reseting\n");

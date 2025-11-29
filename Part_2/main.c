@@ -54,17 +54,15 @@ int main(void)
 			{
 				break;
 			}
-			
-			// Когда я тестировал третьего байта не было
 
-			//// Ожидаем третий байт ответа 
-			//while (get_char_ps2(&ps2_data) != OK);
-			//// Если не равен 0xaa прекращаем проверку
-			//if (ps2_data != 0x00)
-			//{
-			//	printf("3: 0x%02x\n",ps2_data);
-			//	break;
-			//}
+			// Ожидаем третий байт ответа 
+			while (get_char_ps2(&ps2_data) != OK);
+			// Если не равен 0xaa прекращаем проверку
+			if (ps2_data != 0x00)
+			{
+				printf("3: 0x%02x\n",ps2_data);
+				break;
+			}
 
 			// Сюда дошли только если получили корректный ответ на сброс
 			printf("Mouse has been reseting\n");
