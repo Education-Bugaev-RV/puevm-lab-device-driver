@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Nios2",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${SOPC_KIT_NIOS2}/components/altera_nios2/HAL/inc"
+            ],
+            "defines": [
+                "SYSTEM_BUS_WIDTH=32",
+                "ALT_SINGLE_THREADED",
+                "_JTAG_UART_BASE=268439552"
+            ],
+            "compilerPath": "${SOPC_KIT_NIOS2}/bin/gnu/H-i686-mingw32/bin/nios2-elf-gcc",
+            "compilerArgs": [
+                "-std=c99 ",
+                "-g ",
+                "-O1 ",
+                "-ffunction-sections ",
+                "-fverbose-asm ",
+                "-fno-inline"
+            ],
+            "cStandard": "c99"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,3 @@
+{
+    "C_Cpp.default.compilerPath": "${SOPC_KIT_NIOS2}\\bin\\gnu\\H-i686-mingw32\\bin\\nios2-elf-cpp.exe"
+}
