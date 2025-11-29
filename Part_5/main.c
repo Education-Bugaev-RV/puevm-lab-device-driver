@@ -28,9 +28,8 @@ int main(void)
 	set_mouse_bounds(319, 239);
 
 	NIOS2_WRITE_IENABLE( 0b10000000 );	// Устанавливаем значение регистра ienable (определяет обработку отдельных внешних прерываний )	
-	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процесоору )
-
-	struct change_mouse_t package_change_mouse;
+	NIOS2_WRITE_STATUS( 1 );			// Устанавливаем значение в регистр status (0-бит если равен 1 разрешает принимать внешние прерывания процессору )
+	
 	struct change_mouse_t global_change_mouse;
 
 	uint32_t hex_ind_value = 0;
