@@ -14,10 +14,17 @@
 #define RECONNECT_DETECTING (3)
 #define OK_PACKAGE_COMPLETE (5)
 
-typedef struct change_mouse_t
+/* 
+    Если не указать выравнивание, то возникнет ошибка хранения данных проявляющаяся
+    при выводе на HEX индикаторы. Ошибка возникает в результате оптимизации компилятора.
+    Решение: 
+        либо выключить оптимизацию флагом -O0,
+        либо указать кратность выравнивание адресов полей структуры равное 8 
+*/
+typedef struct __attribute__((aligned(8))) change_mouse_t
 {
-    int16_t 	x_val;
-	int16_t 	y_val;
+    int16_t     x_val;
+    int16_t     y_val;
     uint8_t     keys;
     uint8_t     edge_capture;
 };
